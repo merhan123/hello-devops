@@ -1,7 +1,5 @@
-From nginx:alpine
+FROM nginx:alpine
 
-COPY ./hello-devops/index.html /var/www/html/index.html
+COPY ./index.html /usr/share/nginx/html/index.html
 
 EXPOSE 80
-
-
