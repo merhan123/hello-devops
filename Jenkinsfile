@@ -19,13 +19,13 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                sh 'docker build -t "$IMAGE_NAME:$BUILD_NUMBER" .'
+                bat 'docker build -t "$IMAGE_NAME:$BUILD_NUMBER" .'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
+                bat '''
                     docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
                     docker run -d \
                       --name "$CONTAINER_NAME" \
@@ -38,7 +38,7 @@ pipeline {
 
         stage('Verify') {
             steps {
-                sh '''
+                bat '''
                     sleep 2
                     curl --fail --silent --show-error http://127.0.0.1/ > /dev/null
                     echo "Application is responding on port 80."
