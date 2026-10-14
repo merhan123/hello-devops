@@ -40,7 +40,7 @@ pipeline {
             steps {
                 bat '''
                     sleep 2
-                    curl --fail --silent --show-error http://127.0.0.1/ > /dev/null
+                    curl --fail --silent --show-error http://127.0.0.1:8080 
                     echo "Application is responding on port 80."
                 '''
             }
