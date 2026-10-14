@@ -19,16 +19,16 @@ pipeline {
 
         stage('Build Image') {
             steps {
-                bat 'docker build -t "$IMAGE_NAME:$BUILD_NUMBER" .'
+                bat 'docker build -t "%IMAGE_NAME%:%BUILD_NUMBER%" .'
             }
         }
 
         stage('Deploy') {
             steps {
                 bat '''
-                    docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+                    docker rm -f "%CONTAINER_NAME%" 2>/dev/null || true
                     docker run -d \
-                      --name "$CONTAINER_NAME" \
+                      --name "%CONTAINER_NAME%" \
                       --restart unless-stopped \
                       -p 80:80 \
                       "$IMAGE_NAME:$BUILD_NUMBER"
