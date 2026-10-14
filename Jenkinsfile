@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
+
+    environment {
+        IMAGE_NAME = 'devops-test'
+        CONTAINER_NAME = 'web-test'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build Image') {
+            steps {
+                sh 'docker build -t "$IMAGE_NAME:$BUILD_NUMBER" .'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    docker rm -f "$CONTAINER_NAME" 2>/dev/null || true
+                    docker run -d \
+                      --name "$CONTAINER_NAME" \
+                      --restart unless-stopped \
+                      -p 80:80 \
+                      "$IMAGE_NAME:$BUILD_NUMBER"
+                '''
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh '''
+                    sleep 2
+                    curl --fail --silent --show-error http://127.0.0.1/ > /dev/null
+                    echo "Application is responding on port 80."
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment completed successfully."
+        }
+        failure {
+            echo "Pipeline failed. Review the stage logs above."
+        }
+    }
+}
